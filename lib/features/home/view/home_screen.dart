@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:store_book/core/utile/Custom_Text.dart';
+import 'package:store_book/features/home/view/widget/home_body_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: CustomText(title: "HomeScreen", hight: 0.07, color: Colors.black),),
-    );
+    return HomeBodyScreen();
   }
 }

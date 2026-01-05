@@ -7,14 +7,20 @@ import 'package:store_book/core/utile/custom_bottom.dart';
 import 'package:store_book/core/utile/custom_deferent_login.dart';
 import 'package:store_book/core/utile/custom_text_form_field.dart';
 import 'package:store_book/core/utile/custom_title_register.dart';
+import 'package:store_book/features/auth/forget_password/view/forget_password_screen.dart';
 import 'package:store_book/features/auth/login_screen%20copy/view_model/login/cubit/auth_login_cubit.dart';
 import 'package:store_book/features/auth/register_screen/view/register_Screen.dart';
-import 'package:store_book/features/home/view/home_screen.dart';
+import 'package:store_book/features/navigater_bar/view/navigator_screen.dart';
 
 
-class LoginScreenBody extends StatelessWidget {
+class LoginScreenBody extends StatefulWidget {
   const LoginScreenBody({super.key});
 
+  @override
+  State<LoginScreenBody> createState() => _LoginScreenBodyState();
+}
+
+class _LoginScreenBodyState extends State<LoginScreenBody> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> key = GlobalKey<FormState>();
@@ -56,6 +62,8 @@ class LoginScreenBody extends StatelessWidget {
               ),
               SizedBox(height: h * 0.02),
               CustomTextFormField(
+                obscure: true,
+                addIcon: true,
                 validator: (value) {
                   String passwordRegExp = r'^(?=.*[A-Za-z])(?=.*\d).{8,}$';
                   RegExp regExp = RegExp(passwordRegExp);
@@ -75,7 +83,12 @@ class LoginScreenBody extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ForgetPasswordScreen()),
+                      );
+                    },
                     child: CustomText(
                       title: "forgetPassword",
                       hight: 0.02,
@@ -93,13 +106,17 @@ class LoginScreenBody extends StatelessWidget {
                         builder: (context) => AlertDialog(
                           title: Text("Error"),
                           icon: Icon(Icons.error),
-                          content: Column(
-                            children: [
-                              Text(
-                                state.errMassage,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
+                          content: Container(
+                            height: h * 0.05,
+                          width: h * 0.05,
+                            child: Column(
+                              children: [
+                                Text(
+                                  state.errMassage,
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -111,13 +128,13 @@ class LoginScreenBody extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => HomeScreen(),
+                                builder: (context) => NavigatorScreen(),
                               ),
                             );
                           },
                           content: Text('${d.message}'),
                           backgroundColor: Colors.green,
-                          duration: Duration(seconds: 2),
+                          duration: Duration(seconds: 1),
                         ),
                       );
                     }

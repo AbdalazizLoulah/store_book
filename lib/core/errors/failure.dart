@@ -33,8 +33,11 @@ class ServerFailure extends Failure {
       }
   }
   factory ServerFailure.fromBadResponse(int statusCode, dynamic response) {
-    if (statusCode == 400 || statusCode == 401 || statusCode == 403 ||statusCode==422) {
-      return ServerFailure(response['errors']['email'][0]);
+    if (statusCode == 400 || statusCode == 401 || statusCode == 403 ||statusCode==422||statusCode ==405) {
+      if(response['errors']?['email'][0]==null){
+        return ServerFailure(response['message']);
+      }
+      return ServerFailure(response['errors']?['email'][0]);
     } else if (statusCode == 404) {
       return ServerFailure("Response Not Found");
     } else if (statusCode == 500) {

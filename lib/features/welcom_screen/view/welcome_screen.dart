@@ -15,7 +15,9 @@ class WelcomeScreen extends StatelessWidget {
       backgroundColor: AppColor.whiteColor,
       body: Stack(
         children: [
-          Image.asset(height: h, "assets/image/welcome.jpg", fit: BoxFit.fill),
+          Image.asset(height: h,
+          width: double.infinity
+          , "assets/image/welcome.jpg", fit: BoxFit.fill),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
             child: Column(

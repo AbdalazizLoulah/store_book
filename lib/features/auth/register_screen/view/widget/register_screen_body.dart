@@ -10,9 +10,14 @@ import 'package:store_book/core/utile/custom_title_register.dart';
 import 'package:store_book/features/auth/login_screen%20copy/view/login_Screen.dart';
 import 'package:store_book/features/auth/register_screen/view_model/register/cubit/auth_register_cubit.dart';
 
-class RegisterScreenBody extends StatelessWidget {
+class RegisterScreenBody extends StatefulWidget {
   const RegisterScreenBody({super.key});
 
+  @override
+  State<RegisterScreenBody> createState() => _RegisterScreenBodyState();
+}
+
+class _RegisterScreenBodyState extends State<RegisterScreenBody> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController nameController = TextEditingController();
@@ -21,6 +26,7 @@ class RegisterScreenBody extends StatelessWidget {
     final TextEditingController conformPasswordController =
         TextEditingController();
     final GlobalKey<FormState> key = GlobalKey<FormState>();
+    
     final h = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
       child: Form(
@@ -71,6 +77,7 @@ class RegisterScreenBody extends StatelessWidget {
               ),
               SizedBox(height: h * 0.02),
               CustomTextFormField(
+                obscure: true,
                 validator: (value) {
                   String passwordRegExp = r'^(?=.*[A-Za-z])(?=.*\d).{8,}$';
                   RegExp regExp = RegExp(passwordRegExp);
@@ -87,6 +94,7 @@ class RegisterScreenBody extends StatelessWidget {
               ),
               SizedBox(height: h * 0.02),
               CustomTextFormField(
+                obscure: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter your password";
@@ -108,14 +116,28 @@ class RegisterScreenBody extends StatelessWidget {
                       builder: (context) => AlertDialog(
                         title: Text("Error"),
                         icon: Icon(Icons.error),
-                        content: Column(
-                          children: [
-                            Text(
-                              state.errMassage,
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ],
+                        content: Container(
+                          height: h * 0.05,
+                          width: h * 0.05,
+                          child: Column(
+                            children: [
+                              Text(
+                                state.errMassage,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
                         ),
+                        actions: [
+                          CustomBottom(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            title: "close",
+                            titleColor: Colors.black,
+                            bottomColor: AppColor.whiteColor,
+                          ),
+                        ],
                       ),
                     );
                   }
@@ -145,7 +167,7 @@ class RegisterScreenBody extends StatelessWidget {
                     );
                   }
                   return CustomBottom(
-                    onTap: () async{
+                    onTap: () async {
                       if (key.currentState!.validate()) {
                         context.read<AuthRegisterCubit>().authRegister(
                           name: nameController.text,
@@ -154,6 +176,7 @@ class RegisterScreenBody extends StatelessWidget {
                           passwordConform: conformPasswordController.text,
                         );
                       }
+                      
                     },
                     title: "Register",
                     titleColor: AppColor.whiteColor,

@@ -29,4 +29,18 @@ class ApiService {
     );
     return res.data;
   }
+  Future<Map<String, dynamic>> getData({
+    required String endpoint,
+  }) async {
+    var res = await _dio.get(
+      "$_paseUrl$endpoint",
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+      ),
+    );
+    return res.data;
+  }
 }
