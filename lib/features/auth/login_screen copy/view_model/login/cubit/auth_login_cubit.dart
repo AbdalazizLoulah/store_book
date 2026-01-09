@@ -10,21 +10,15 @@ class AuthLoginCubit extends Cubit<AuthLoginState> {
   AuthLoginCubit(this.loginRepo) : super(AuthLoginInitial());
   final LoginRepo loginRepo;
   Future authLogin({required String email, required String password}) async {
-    // final hasConnection =
-    //     await InternetConnectionChecker.instance.hasConnection;
-    // if (!hasConnection) {
-    //   emit(AuthLoginFailure(errMassage: '❌ لا يوجد اتصال بالإنترنت'));
-    // } else {
-      emit(AuthLoginLoading());
-      var login = await loginRepo.logIn(email: email, password: password);
-      login.fold(
-        (failure) {
-          emit(AuthLoginFailure(errMassage: failure.errMassage));
-        },
-        (login) {
-          emit(AuthLoginSuccess(login: login));
-        },
-      );
-    }
+    emit(AuthLoginLoading());
+    var login = await loginRepo.logIn(email: email, password: password);
+    login.fold(
+      (failure) {
+        emit(AuthLoginFailure(errMassage: failure.errMassage));
+      },
+      (login) {
+        emit(AuthLoginSuccess(login: login));
+      },
+    );
   }
-//  }
+}

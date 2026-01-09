@@ -6,6 +6,9 @@ sealed class AuthLoginState {}
 final class AuthLoginInitial extends AuthLoginState {}
 
 final class AuthLoginLoading extends AuthLoginState {}
+class AuthLoggedIn extends AuthLoginState {}
+
+class AuthLoggedOut extends AuthLoginState {}
 
 final class AuthLoginSuccess extends AuthLoginState {
   final LoginModel login;

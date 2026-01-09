@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:store_book/features/home/view/widget/home_body_screen.dart';
+import 'package:store_book/core/const/app_color.dart';
+import 'package:store_book/features/home/view/home_screen.dart';
+import 'package:store_book/features/profile/view/profile_scree.dart';
+import 'package:store_book/features/wish_list/view/wish_list.dart';
 
 class NavigatorScreen extends StatefulWidget {
-  const NavigatorScreen({super.key});
-
+  const NavigatorScreen({super.key,});
+  
   @override
   State<NavigatorScreen> createState() => _NavigatorScreenState();
 }
@@ -13,13 +16,15 @@ class _NavigatorScreenState extends State<NavigatorScreen> {
   @override
   Widget build(BuildContext context) {
     List<Widget> screens = [
-      HomeBodyScreen(),
-      Container(color: Colors.black),
-      Container(color: Colors.red),
+      HomeScreen(),
+      WishList(),
       Container(color: Colors.blue),
+      ProfileScreen(
+      ),
     ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
+        
         onTap: (index) {
           setState(() {
             currentIndex = index;

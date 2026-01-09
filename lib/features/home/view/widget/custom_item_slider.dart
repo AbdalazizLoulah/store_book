@@ -15,9 +15,6 @@ class CustomItemSlider extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            colors: [Color(0xffF08C6A), Color(0xffE86F51)],
-          ),
         ),
         child: ClipRRect(
           borderRadius: BorderRadiusGeometry.circular(16),

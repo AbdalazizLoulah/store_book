@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_book/core/const/app_color.dart';
+import 'package:store_book/core/service/local_data/local_service_sheard.dart';
 import 'package:store_book/core/utile/Custom_Text.dart';
 import 'package:store_book/core/utile/custom_back_bottom.dart';
 import 'package:store_book/core/utile/custom_bottom.dart';
@@ -12,7 +14,6 @@ import 'package:store_book/features/auth/login_screen%20copy/view_model/login/cu
 import 'package:store_book/features/auth/register_screen/view/register_Screen.dart';
 import 'package:store_book/features/navigater_bar/view/navigator_screen.dart';
 
-
 class LoginScreenBody extends StatefulWidget {
   const LoginScreenBody({super.key});
 
@@ -21,6 +22,14 @@ class LoginScreenBody extends StatefulWidget {
 }
 
 class _LoginScreenBodyState extends State<LoginScreenBody> {
+  init(String token, String email,String password,) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    sharedPreferences.setString('token', token);
+    sharedPreferences.setString('email', email);
+    sharedPreferences.setString('password', password);
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> key = GlobalKey<FormState>();
@@ -86,7 +95,9 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ForgetPasswordScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => ForgetPasswordScreen(),
+                        ),
                       );
                     },
                     child: CustomText(
@@ -100,44 +111,50 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
               SizedBox(height: h * 0.04),
               BlocConsumer<AuthLoginCubit, AuthLoginState>(
                 listener: (context, state) {
-                  if(state is AuthLoginFailure){
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Error"),
-                          icon: Icon(Icons.error),
-                          content: Container(
-                            height: h * 0.05,
+                  if (state is AuthLoginFailure) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Error"),
+                        icon: Icon(Icons.error),
+                        content: Container(
+                          height: h * 0.05,
                           width: h * 0.05,
-                            child: Column(
-                              children: [
-                                Text(
-                                  state.errMassage,
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ],
-                            ),
+                          child: Column(
+                            children: [
+                              Text(
+                                state.errMassage,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    }if(state is AuthLoginSuccess){
-                      var d = state.login;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          onVisible: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NavigatorScreen(),
+                      ),
+                    );
+                  }
+                  if (state is AuthLoginSuccess) {
+                    var d = state.login;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        onVisible: () {
+                          init(d.data!.token!,d.data!.user!.email!,
+                            passwordController.text,
+                          );
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NavigatorScreen(
                               ),
-                            );
-                          },
-                          content: Text('${d.message}'),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    }
+                            ),
+                          );
+                        },
+                        content: Text('${d.message}'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  }
                 },
                 builder: (context, state) {
                   if (state is AuthLoginLoading) {

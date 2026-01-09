@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:store_book/core/utile/Custom_Text.dart';
 import 'package:store_book/features/home/view/widget/custom_app_bar.dart';
 import 'package:store_book/features/home/view/widget/custom_grade_view.dart';
@@ -32,7 +33,7 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: h * 0.05),
-            CustomAppBar(),
+            CustomAppBarHome(),
             SizedBox(height: h * 0.02),
             BlocBuilder<SliderCubit, SliderState>(
               builder: (context, state) {
@@ -50,18 +51,28 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                     ),
                   );
                 }
-                return Container(
-                  height: h*0.2,
-                  child: Center(child: CircularProgressIndicator()),
+                return Shimmer(
+                  color: Colors.black,
+                  child: Container(
+                    height:h*0.2 ,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
                 );
               },
             ),
             SizedBox(height: h * 0.02),
-            CustomText(title: "Popular Books", hight: 0.022, color: Colors.black),
+            CustomText(
+              title: "Popular Books",
+              hight: 0.022,
+              color: Colors.black,
+            ),
             BlocBuilder<ProductsCubit, ProductsState>(
               builder: (context, state) {
                 if (state is ProductsSuccess) {
-                  return CustomGradeView(data: state.data,);
+                  return CustomGradeView(data: state.data);
                 }
                 if (state is ProductsFailure) {
                   return CustomText(
@@ -70,9 +81,23 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
                     color: Colors.black,
                   );
                 }
-                return Container(
-                  height: h*0.9,
-                  child: Center(child: CircularProgressIndicator()),
+                return  GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 4,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 17,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.51,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Shimmer(
+                      color: Colors.black,
+                      child: Container(
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                        height: h*0.01,width: h*0.02,));
+                  },
                 );
               },
             ),
@@ -82,5 +107,3 @@ class _HomeBodyScreenState extends State<HomeBodyScreen> {
     );
   }
 }
-
-

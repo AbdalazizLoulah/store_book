@@ -16,7 +16,7 @@ class BookItem extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsScreen(id:data.id!)));
       },
       child: Container(
-        height: 300,
+        height: h*0.01,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: AppColor.itemColor,
