@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store_book/core/const/app_color.dart';
-import 'package:store_book/core/service/local_data/local_service_sqf.dart';
 import 'package:store_book/core/utile/Custom_Text.dart';
 import 'package:store_book/core/utile/custom_back_bottom.dart';
 import 'package:store_book/core/utile/custom_bottom.dart';
 import 'package:store_book/features/details/view_model/deitails/cubit/details_cubit.dart';
+import 'package:store_book/features/details/view_model/add_to_wish_list/cubit/add_to_wish_list_cubit.dart';
+import 'package:store_book/features/wish_list/view_model/cubit/get_wish_list_cubit.dart';
 
 class DetailsScreenBody extends StatefulWidget {
   const DetailsScreenBody({super.key, required this.id});
@@ -18,12 +19,15 @@ class _DetailsScreenBodyState extends State<DetailsScreenBody> {
   @override
   void initState() {
     context.read<DetailsCubit>().getAllDetails(widget.id);
+    context.read<GetWishListCubit>().getData();
     super.initState();
   }
 
+  bool isSave = false;
+  bool _isAdding = false;
+  bool _prevIsSave = false;
   @override
   Widget build(BuildContext context) {
-    LocalServiceSqf sql = LocalServiceSqf();
     final h = MediaQuery.of(context).size.height;
     return SingleChildScrollView(
       child: BlocBuilder<DetailsCubit, DetailsState>(
@@ -51,17 +55,93 @@ class _DetailsScreenBodyState extends State<DetailsScreenBody> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CustomBackBottom(),
-                      GestureDetector(
-                        onTap: () async {
-                          int response = await sql.insertData(
-                            name: '${data!.name}', image: '${data.image}', price: '${data.price}'
-                          );
-                          print("===============$response+++++++++");
+                      BlocConsumer<GetWishListCubit, GetWishListState>(
+                        listener: (context, state) {
+                          if (state is GetWishListSuccess) {
+                            final exists = state.data.data.items.any(
+                              (item) => item.id == data!.id,
+                            );
+                            setState(() {
+                              isSave = exists;
+                            });
+                          }
                         },
-                        child: Icon(
-                          Icons.bookmark_outline_outlined,
-                          size: h * 0.04,
-                        ),
+                        builder: (context, state) {
+                          return BlocListener<
+                            AddToWishListCubit,
+                            AddToWishListState
+                          >(
+                            listener: (context, state) {
+                              if (state is AddToWishListLoading) {
+                                setState(() {
+                                  _isAdding = true;
+                                });
+                              } else if (state is AddToWishListSuccess) {
+                                setState(() {
+                                  _isAdding = false;
+                                });
+                                final resp = state.data;
+                                // update icon based on server returned list
+                                final exists = resp.data.products.any(
+                                  (p) => p.id == data!.id,
+                                );
+                                setState(() {
+                                  isSave = exists;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${resp.message}'),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                                // refresh wishlist to keep global state in sync
+                                context.read<GetWishListCubit>().getData();
+                              } else if (state is AddToWishListFailure) {
+                                setState(() {
+                                  _isAdding = false;
+                                  isSave = _prevIsSave;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${state.errMassage}'),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                                // optionally refresh list
+                                context.read<GetWishListCubit>().getData();
+                              }
+                            },
+                            child: GestureDetector(
+                              onTap: () {
+                                if (_isAdding) return; // prevent double taps
+                                _prevIsSave = isSave;
+                                // optimistic UI toggle
+                                setState(() {
+                                  isSave = !isSave;
+                                });
+                                context.read<AddToWishListCubit>().add(
+                                  data!.id!,
+                                );
+                              },
+                              child: _isAdding
+                                  ? SizedBox(
+                                      width: h * 0.04,
+                                      height: h * 0.04,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Icon(
+                                      isSave
+                                          ? Icons.bookmark_add_sharp
+                                          : Icons.bookmark_outline_outlined,
+                                      size: h * 0.04,
+                                    ),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

@@ -34,8 +34,8 @@ class ServerFailure extends Failure {
   }
   factory ServerFailure.fromBadResponse(int statusCode, dynamic response) {
     if (statusCode == 400 || statusCode == 401 || statusCode == 403 ||statusCode==422||statusCode ==405) {
-      if(response['errors']?['email'][0]==null){
-        return ServerFailure(response['message']);
+      if (response['errors']?['email']?.isNotEmpty != true) {
+        return ServerFailure(response['message'] ?? "Unknown Error");
       }
       return ServerFailure(response['errors']?['email'][0]);
     } else if (statusCode == 404) {

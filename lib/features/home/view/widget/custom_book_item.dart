@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store_book/core/const/app_color.dart';
 import 'package:store_book/core/utile/Custom_Text.dart';
 import 'package:store_book/features/details/view/details_screen.dart';
 import 'package:store_book/features/home/data/model/product_model/all_product_model/prouduct_model.dart';
+import 'package:store_book/features/home/view_model/add_cart/cubit/add_to_cart_cubit.dart';
 
 class BookItem extends StatelessWidget {
   final Product data;
@@ -13,10 +15,13 @@ class BookItem extends StatelessWidget {
     final h = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailsScreen(id:data.id!)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DetailsScreen(id: data.id!)),
+        );
       },
       child: Container(
-        height: h*0.01,
+        height: h * 0.01,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           color: AppColor.itemColor,
@@ -52,17 +57,56 @@ class BookItem extends StatelessWidget {
                     '₹${data.price}',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      minimumSize: const Size(50, 30),
-                    ),
-                    onPressed: () {},
-                    child: CustomText(
-                      title: "Buy",
-                      hight: 0.02,
-                      color: AppColor.whiteColor,
-                    ),
+                  BlocConsumer<AddToCartCubit, AddToCartState>(
+                    listener: (context, state) {
+                    if (state is AddToCartFailure) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Error"),
+                        icon: Icon(Icons.error),
+                        content: Container(
+                          height: h * 0.05,
+                          width: h * 0.05,
+                          child: Column(
+                            children: [
+                              Text(
+                                state.errMassage,
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  if (state is AddToCartSuccess) {
+                    var d = state.data;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${d.message}'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  }
+                    },
+                    builder: (context, state) {
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          minimumSize: const Size(50, 30),
+                        ),
+                        onPressed: () {
+                          context.read<AddToCartCubit>().addToCart(data.id!);
+                        },
+                        child: CustomText(
+                          title: "Buy",
+                          hight: 0.02,
+                          color: AppColor.whiteColor,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

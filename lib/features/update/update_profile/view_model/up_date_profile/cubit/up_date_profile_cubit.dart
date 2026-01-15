@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:store_book/core/service/api_service.dart';
+
 import 'package:store_book/features/update/update_profile/data/model/update_profile_model.dart';
 import 'package:store_book/features/update/update_profile/data/repo/update_profile_repo.dart';
 

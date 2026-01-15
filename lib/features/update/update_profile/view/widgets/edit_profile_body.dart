@@ -6,7 +6,6 @@ import 'package:store_book/core/utile/custom_back_bottom.dart';
 import 'package:store_book/core/utile/custom_bottom.dart';
 import 'package:store_book/core/utile/custom_text_form_field.dart';
 import 'package:store_book/features/navigater_bar/view/navigator_screen.dart';
-import 'package:store_book/features/profile/view/profile_scree.dart';
 import 'package:store_book/features/update/update_profile/view_model/up_date_profile/cubit/up_date_profile_cubit.dart';
 
 class EditProfileBody extends StatelessWidget {

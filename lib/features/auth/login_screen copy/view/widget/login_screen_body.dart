@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_book/core/const/app_color.dart';
 import 'package:store_book/core/service/local_data/local_service_sheard.dart';
 import 'package:store_book/core/utile/Custom_Text.dart';
+import 'package:store_book/core/utile/custom_alert_dilog_error.dart';
 import 'package:store_book/core/utile/custom_back_bottom.dart';
 import 'package:store_book/core/utile/custom_bottom.dart';
 import 'package:store_book/core/utile/custom_deferent_login.dart';
@@ -22,19 +22,13 @@ class LoginScreenBody extends StatefulWidget {
 }
 
 class _LoginScreenBodyState extends State<LoginScreenBody> {
-  init(String token, String email,String password,) async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    sharedPreferences.setString('token', token);
-    sharedPreferences.setString('email', email);
-    sharedPreferences.setString('password', password);
-  }
+  final GlobalKey<FormState> key = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> key = GlobalKey<FormState>();
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
+  
     final h = MediaQuery.of(context).size.height;
     return Form(
       key: key,
@@ -114,22 +108,7 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                   if (state is AuthLoginFailure) {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text("Error"),
-                        icon: Icon(Icons.error),
-                        content: Container(
-                          height: h * 0.05,
-                          width: h * 0.05,
-                          child: Column(
-                            children: [
-                              Text(
-                                state.errMassage,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      builder: (context) => CustomAlertDialogError(errMassage: state.errMassage,)
                     );
                   }
                   if (state is AuthLoginSuccess) {
@@ -137,10 +116,6 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         onVisible: () {
-                          init(d.data!.token!,d.data!.user!.email!,
-                            passwordController.text,
-                          );
-
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -149,7 +124,7 @@ class _LoginScreenBodyState extends State<LoginScreenBody> {
                             ),
                           );
                         },
-                        content: Text('${d.message}'),
+                        content: Text('${d.message}**${LocalService.token}'),
                         backgroundColor: Colors.green,
                         duration: Duration(seconds: 1),
                       ),

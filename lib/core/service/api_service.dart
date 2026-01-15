@@ -47,13 +47,16 @@ class ApiService {
 
   Future<Map<String, dynamic>> upData({
     required String endpoint,
-     String? name,
+    String? name,
     String? address,
     String? phone,
     String? email,
     String? currentPassword,
     String? newPassword,
     String? newPasswordConfirmation,
+    int? id,
+    int? cartId,
+    int? quantity,
   }) async {
     var res = await _dio.post(
       "$_paseUrl$endpoint",
@@ -63,7 +66,6 @@ class ApiService {
           "Accept": "application/json",
           'Authorization': 'Bearer ${LocalService.token.toString()}',
         },
-        
       ),
       data: {
         "name": name,
@@ -72,7 +74,10 @@ class ApiService {
         "phone": phone,
         "current_password": currentPassword,
         "new_password": newPassword,
-        "new_password_confirmation": newPasswordConfirmation
+        "new_password_confirmation": newPasswordConfirmation,
+        "product_id": id,
+        "cart_item_id": 4707,
+        "quantity": 2,
       },
     );
     return res.data;
